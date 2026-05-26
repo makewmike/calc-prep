@@ -1,12 +1,12 @@
 {
-  "last_updated": "2026-05-25",
-  "session_count": 0,
+  "last_updated": "2026-05-26",
+  "session_count": 1,
   "topics": {
     "algebra": 4,
     "functions_graphs": 4,
     "composition_inverses": 4,
     "trigonometry": 4,
     "exponentials_logs": 4,
-    "limits_intuition": 3
+    "limits_intuition": 4
   }
 }
