@@ -85,7 +85,11 @@ at least 3 problems were attempted.
 4. **Save quiz** → `quizzes/YYYY-MM-DD-quiz.md` with all problems, answers, and miss table.
 5. **Optionally** append key concept reference to `notes/<topic>.md` if new concepts
    were introduced.
-6. **Commit all changed files** to `main`:
+6. **Run `python validate.py`** — confirm both JSON files are schema-valid before committing.
+   If validation fails, fix the malformed file before proceeding.
+7. **Run `python generate_readme.py`** — regenerates the mastery table and status block
+   in README.md from the updated JSON. Always run this after updating mastery.json.
+8. **Commit all changed files** to `main`:
    `study: <topic> (<duration>m) — session <N>`
 
 > ⚠️ Never commit empty, trivial, or placeholder files.

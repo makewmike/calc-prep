@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Mastery Progress",
+  "description": "Tracks per-topic mastery scores (0–10) for the calc-prep study system.",
+  "type": "object",
+  "required": ["last_updated", "session_count", "topics"],
+  "additionalProperties": false,
+  "properties": {
+    "last_updated": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "ISO date of the most recent update (YYYY-MM-DD)"
+    },
+    "session_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of completed study sessions"
+    },
+    "topics": {
+      "type": "object",
+      "required": [
+        "algebra",
+        "functions_graphs",
+        "composition_inverses",
+        "trigonometry",
+        "exponentials_logs",
+        "limits_intuition"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "algebra":              { "type": "integer", "minimum": 0, "maximum": 10 },
+        "functions_graphs":     { "type": "integer", "minimum": 0, "maximum": 10 },
+        "composition_inverses": { "type": "integer", "minimum": 0, "maximum": 10 },
+        "trigonometry":         { "type": "integer", "minimum": 0, "maximum": 10 },
+        "exponentials_logs":    { "type": "integer", "minimum": 0, "maximum": 10 },
+        "limits_intuition":     { "type": "integer", "minimum": 0, "maximum": 10 }
+      }
+    }
+  }
+}
