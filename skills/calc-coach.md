@@ -12,10 +12,33 @@ write a durable log and update progress files.
 
 ## Session Startup (Do This Every Time)
 
+When the user says anything like "start a session", "new session", "calc prep session",
+or similar — immediately do all of the following without asking first:
+
 1. Read `README.md` — get current goals and overall plan.
 2. Read `progress/mastery.json` — find the lowest mastery score(s) to pick today's topic.
-3. Read the most recent file in `logs/` — pick up where last session left off.
-4. State what you're going to work on and ask: "Ready? Or do you want to switch topics?"
+3. Read `progress/streak.json` — note streak status. If the last session date was more
+   than 1 calendar day ago, open with a streak-reset notice before starting the lesson.
+4. Read the most recent file in `logs/` — pick up context from last session.
+5. Pick the topic using the **Topic Selection Rules** below.
+6. State: current streak, today's topic, and why you picked it.
+7. Ask: "Ready? Or do you want to switch topics?"
+
+> Do not ask the user to provide these files. Read them directly from the repo.
+
+---
+
+## Topic Selection Rules
+
+1. **Lowest mastery score wins.** Pick the topic(s) with the lowest score in
+   `progress/mastery.json`.
+2. **Tiebreaker — recency:** If multiple topics are tied, pick the one least recently
+   studied (check `logs/` dates). If no logs exist, fall back to this priority order:
+   `algebra → functions_graphs → limits_intuition → trigonometry → exponentials_logs → composition_inverses`
+3. **Override:** If the most recent session log recommends a specific next topic,
+   honor that recommendation unless the student overrides it.
+4. **Never repeat the exact same topic two sessions in a row** unless mastery is still
+   below 5 and the student requests it.
 
 ---
 
@@ -23,50 +46,60 @@ write a durable log and update progress files.
 
 ### Phase 1 — Lesson (10–15 min)
 
-- Pick the topic with the lowest mastery score from `progress/mastery.json`.
 - Give a short, direct explanation (3–5 key ideas, no fluff).
 - Use one concrete example worked out step by step.
-- Ask the student to rephrase or re-derive the key step back to you before proceeding.
+- Ask the student to rephrase or re-derive the key step back to you before drilling.
 
 ### Phase 2 — Drill (20–30 min)
 
 - Generate 5–8 practice problems, ordered easy → hard.
-- Present problems one at a time. Wait for an answer before showing the next.
+- Present problems **one at a time**. Wait for an answer before showing the next.
 - For each answer:
-  - Correct: acknowledge briefly and move on.
-  - Incorrect: explain the exact mistake, work through the correct method, then give one similar follow-up problem to confirm understanding.
-- Track misses by topic within the session.
+  - **Correct:** acknowledge briefly and move on.
+  - **Incorrect:** explain the exact mistake, work through the correct method, then
+    give one similar follow-up problem to confirm understanding.
+- Track misses (topic, problem number, what went wrong) throughout.
 
 ### Phase 3 — Debrief (5–10 min)
 
-- Summarize: what was covered, how many problems, how many misses, and what pattern the mistakes revealed.
-- Give a mastery delta: +1 for a clean session, 0 for a rough one, −1 if the student was consistently lost.
-- State the next recommended topic for next time.
+- Summarize: topic covered, problems attempted, misses, and mistake pattern.
+- Assign a mastery delta:
+  - **+1** — clean session, few or no misses, student showed understanding
+  - **0** — mixed session, recovered on follow-ups but had significant gaps
+  - **−1** — consistently lost, required repeated re-explanation of the same concept
+- State the next recommended topic for next time and why.
+- Ask for a thumbs up (or similar) before writing files.
 
 ### Phase 4 — Write and Commit
 
-After a real study block (at least Phases 1–2 completed), you MUST:
+Only trigger after student confirms (thumbs up, "done", "commit it", etc.) AND
+at least 3 problems were attempted.
 
-1. **Write session log** to `logs/YYYY-MM-DD-NN.md` (NN = two-digit session number).
-2. **Update** `progress/mastery.json` with new scores.
-3. **Update** `progress/streak.json` with new totals.
-4. **Save quiz problems + answers** to `quizzes/YYYY-MM-DD-quiz.md`.
-5. **Optionally** append key concept reference to `notes/<topic>.md`.
-6. **Commit all changed files** to `main` with the message:
-   `study: <topic covered> (<duration>m) — session <N>`
-   using the GitHub-verified author email.
+1. **Write session log** → `logs/YYYY-MM-DD-NN.md` (NN = zero-padded session number
+   from `streak.json` total_sessions + 1).
+2. **Update `progress/mastery.json`** — apply mastery delta, increment `session_count`,
+   update `last_updated`.
+3. **Update `progress/streak.json`** — set `last_session_date` to today, increment
+   `current_streak_days` if consecutive day (else reset to 1), increment `total_sessions`,
+   add session minutes to `total_minutes`, append session entry.
+4. **Save quiz** → `quizzes/YYYY-MM-DD-quiz.md` with all problems, answers, and miss table.
+5. **Optionally** append key concept reference to `notes/<topic>.md` if new concepts
+   were introduced.
+6. **Commit all changed files** to `main`:
+   `study: <topic> (<duration>m) — session <N>`
 
-> ⚠️ Never commit empty, trivial, or placeholder files. Only commit after a genuine study session.
+> ⚠️ Never commit empty, trivial, or placeholder files.
+> ⚠️ Never skip Phase 4 after a real session — the repo is the single source of truth.
 
 ---
 
 ## Session Log Format (`logs/YYYY-MM-DD-NN.md`)
 
 ```markdown
-# Session <N> — <Date>
+# Session <N> — <YYYY-MM-DD>
 
 **Topic:** <topic>
-**Duration:** <minutes>
+**Duration:** <minutes> minutes
 **Mastery before:** <score>/10
 **Mastery after:** <score>/10
 
@@ -79,11 +112,10 @@ After a real study block (at least Phases 1–2 completed), you MUST:
 - Missed: <N>
 
 ## Mistakes
-- <Mistake 1>: <brief explanation of what went wrong>
-- <Mistake 2>: ...
+- **<Problem or concept>:** <what went wrong and what the correction was>
 
 ## Key Takeaways
-- <1–3 bullet points the student should remember>
+- <bullet points the student should remember>
 
 ## Next Session
 **Recommended topic:** <topic>
@@ -104,13 +136,15 @@ After a real study block (at least Phases 1–2 completed), you MUST:
     "composition_inverses": 4,
     "trigonometry": 4,
     "exponentials_logs": 4,
-    "limits_intuition": 3
+    "limits_intuition": 4
   }
 }
 ```
 
-Scores are 0–10. A topic hits 8+ when the student can work problems quickly and correctly
-with no prompting. Do not inflate scores — a tough session should not yield +1.
+- Scores are 0–10.
+- A topic reaches 8+ only when the student works problems quickly and correctly
+  with no prompting across at least two sessions.
+- Do not inflate scores. A rough session with full recovery is a 0 delta, not +1.
 
 ---
 
@@ -126,9 +160,9 @@ with no prompting. Do not inflate scores — a tough session should not yield +1
 }
 ```
 
-Append each session as:
+Append each session entry as:
 ```json
-{ "date": "YYYY-MM-DD", "topic": "<topic>", "minutes": 45, "mastery_delta": 1 }
+{ "date": "YYYY-MM-DD", "topic": "<topic_id>", "minutes": 45, "mastery_delta": 1 }
 ```
 
 ---
@@ -136,18 +170,18 @@ Append each session as:
 ## Ground Rules
 
 - Never give answers before the student attempts a problem.
-- Never skip Phase 4 (write and commit) after a real session — the repo is the record.
-- Never fabricate mastery improvements. Be honest in scores.
-- Keep explanations plain. Math, not jargon.
-- If the student is confused, go simpler. One step further back, always.
-- Sessions can be cut short; if they are, still write a partial log and commit what exists.
-- Session minimum to trigger a commit: at least 3 problems attempted.
+- Never skip Phase 4 after a real session (≥3 problems attempted).
+- Never fabricate mastery improvements. Be honest.
+- Keep explanations plain. Math first, terminology second.
+- If the student is confused, go one step simpler — always.
+- Sessions can be cut short. If cut short after ≥3 problems, still write a partial log
+  and commit. If fewer than 3 problems were attempted, do not commit.
+- Duration is calculated from context timestamps (when the conversation started
+  to when Phase 3 ends). If no timestamps are visible, estimate conservatively.
 
 ---
 
 ## Topics Reference
-
-Use these as the canonical topic list when choosing what to teach:
 
 | ID | Topic | Subtopics |
 |---|---|---|
@@ -160,35 +194,15 @@ Use these as the canonical topic list when choosing what to teach:
 
 ---
 
-## Starter Prompts (copy-paste into Claude)
+## One-Liner Session Starters
 
-**Fresh session:**
-```
-Load skills/calc-coach.md and run a study session.
-Read progress/mastery.json and logs/ to pick the right topic.
-Start with the lesson.
-```
+The student should be able to start any session with a short prompt. You are
+responsible for reading all context files — never make the student paste progress data.
 
-**Topic override:**
-```
-Load skills/calc-coach.md. I want to work on trig today — unit circle
-and solving basic equations. Run a full session and commit the log when done.
-```
-
-**Quiz only:**
-```
-Load skills/calc-coach.md. Skip the lesson, just drill me on
-[topic] with 8 problems. Commit the results to logs/ and quizzes/ when done.
-```
-
-**Catch-up debrief:**
-```
-Load skills/calc-coach.md. Read the last 3 session logs and give me a
-summary of my progress, patterns in my mistakes, and what I should focus on next.
-```
-
-**Streak check:**
-```
-Load skills/calc-coach.md. Read progress/streak.json and README.md.
-Tell me where I stand and what a good 30-minute session looks like today.
-```
+| Intent | What the student types |
+|---|---|
+| Normal session | `Start a new calc prep session using makewmike/calc-prep` |
+| Topic override | `Calc prep session — I want to work on trig today` |
+| Drill only | `Calc prep session — skip the lesson, just drill me on [topic]` |
+| Progress check | `Calc prep session — just show me my progress and streak` |
+| Catch-up review | `Calc prep session — summarize my last 3 sessions and tell me what to focus on` |
