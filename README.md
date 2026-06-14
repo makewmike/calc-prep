@@ -11,11 +11,11 @@ in the GitHub contribution graph and giving me a readable study history.
 ## Current Status
 
 - **Readiness score:** 5/12 (May 25, 2026 diagnostic)
-- **Average mastery:** 4.0/10
-- **Sessions completed:** 1
-- **Total study time:** 43 minutes
+- **Average mastery:** 4.2/10
+- **Sessions completed:** 2
+- **Total study time:** 53 minutes
 - **Current streak:** 1 day(s)
-- **Last session:** 2026-05-26
+- **Last session:** 2026-06-14
 - **Target:** Calc 1 ready at Coastline Community College
 - **Overall goal:** Physics B.S. pathway → CSUSM / ASU transfer
 
@@ -25,7 +25,7 @@ in the GitHub contribution graph and giving me a readable study history.
 
 | Topic | Mastery (0–10) | Last Studied | Priority |
 |---|---|---|---|
-| Algebra (equations, exponents, radicals) | 4 | 2026-05-26 | 🔴 High |
+| Algebra (equations, exponents, radicals) | 5 | 2026-06-14 | 🟡 Medium |
 | Functions & graphs (domain, range, transforms) | 4 | — | 🔴 High |
 | Composition & inverses | 4 | — | 🔴 High |
 | Trigonometry (unit circle, identities) | 4 | — | 🔴 High |
